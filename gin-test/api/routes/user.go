@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/luviz/gin-test/models"
 	s "github.com/luviz/gin-test/services"
 )
 
@@ -16,6 +17,7 @@ func UserRoutes(group gin.RouterGroup, s s.Services) gin.RouterGroup {
 		ctx.Set("id", ctx.Param("id"))
 	}, getUserById(s))
 
+	userGroup.POST("", createUser(s))
 	return group
 }
 
@@ -29,5 +31,22 @@ func getUserById(s s.Services) gin.HandlerFunc {
 		} else {
 			ctx.JSON(http.StatusNotFound, gin.H{"message": "user not found"})
 		}
+	}
+}
+
+func createUser(s s.Services) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		log := s.Logger.WithName("create")
+		log.Info("creating object")
+		err := s.User.Create(models.User{
+			Id:   "u0012",
+			Name: "bardia",
+			Mail: "someName@bardiajedi.com",
+		})
+		if err != nil {
+			log.Error(err, "could not create object")
+			ctx.AbortWithError(http.StatusConflict, err)
+		}
+		ctx.JSON(http.StatusAccepted, gin.H{"status": "ok"})
 	}
 }

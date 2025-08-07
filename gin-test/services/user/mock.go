@@ -40,3 +40,7 @@ func (MockUserService) Get(id string) (models.User, bool) {
 func (MockUserService) List() []models.User {
 	return slices.Collect(maps.Values(MockUsers))
 }
+
+func (MockUserService) Create(user models.User) error {
+	return nil
+}

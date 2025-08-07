@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	services := s.InitServices(true)
+	services := s.InitServices(false)
 	ginServer := api.InitGin(services)
 
 	services.Logger.WithName("main").Info("Server starting on", "port", "5432")
