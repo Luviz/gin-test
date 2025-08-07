@@ -1,0 +1,42 @@
+services:
+  ingress:
+    image: nginxproxy/nginx-proxy
+    ports:
+      - "8080:8080"
+    networks:
+      - internal
+      - external
+    environment:
+      - HTTP_PORT=8080
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+  
+  gin-test:
+    image: tilt-gin-test
+    expose:
+      - 5432
+    environment:
+      - VIRTUAL_HOST=gin-test-127-0-0-1.nip.io
+    networks:
+      - internal
+  database:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=qwert1234
+      - POSTGRES_DB=test-app
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - .tmp/hydra-db:/var/lib/postgresql/data
+    networks:
+      - internal
+
+networks:
+  internal:
+  external:
