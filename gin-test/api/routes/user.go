@@ -14,7 +14,6 @@ func UserRoutes(group gin.RouterGroup, s s.Services) gin.RouterGroup {
 	})
 	userGroup.GET("/:id", func(ctx *gin.Context) {
 		ctx.Set("id", ctx.Param("id"))
-		ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{"message": "meh"})
 	}, getUserById(s))
 
 	return group
